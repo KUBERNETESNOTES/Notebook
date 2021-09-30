@@ -4,41 +4,41 @@ This documentation guides you in setting up a cluster with one master node and t
 
 ## Assumptions
 
-Role: Master
+__Role__: ___Master___
 
-IP: 167.254.173.122
+__IP__: 167.254.190.70
 
-Hostname:emf53122.nms.fnc.fujitsu.com
+__Hostname__: emf53122.companyname.projectname.com
 
-OS: CentOS 7
+__OS__: CentOS 7
 
-RAM: 2G
+__RAM__: 2G
 
-CPU: 2
+__CPU__: 2
 
-Role: Worker1
+__Role__: ___Worker1___
 
-IP: 167.254.173.123
+__IP__: 167.254.150.20
 
-Hostname:emf53123.nms.fnc.fujitsu.com
+__Hostname__: emf53123.companyname.projectname.com
 
-OS: CentOS 7
+__OS__: CentOS 7
 
-RAM: 2G
+__RAM__: 2G
 
-CPU: 2
+__CPU__: 2
 
-Role: Worker2
+__Role__: ___Worker2___
 
-IP: 167.254.173.124
+__IP__: 167.254.151.21
 
-Hostname:emf53124.nms.fnc.fujitsu.com
+__Hostname__: emf53124.nms.fnc.fujitsu.com
 
-OS: CentOS 7
+__OS__: CentOS 7
 
-RAM: 2G
+__RAM__: 2G
 
-CPU: 2
+__CPU__: 2
 
 ## Note: -
 On both Master and Worker Perform all the commands as root user unless otherwise specified
@@ -54,14 +54,19 @@ swapoff -a; sed -i '/swap/d' /etc/fstab
 #### Disable SELinux
 
 setenforce 0
+
 sed -i --follow-symlinks 's/^SELINUX=enforcing/SELINUX=disabled/' /etc/sysconfig/selinux
 
 #### Update sysctl settings for Kubernetes networking
 
 cat >>/etc/sysctl.d/kubernetes.conf<<EOF
+
 net.bridge.bridge-nf-call-ip6tables = 1
+
 net.bridge.bridge-nf-call-iptables = 1
+                                         
 EOF
+                                         
 sysctl --system
 
 
@@ -108,29 +113,25 @@ yum install -y kubeadm-1.18.5-0 kubelet-1.18.5-0 kubectl-1.18.5-0
 
 systemctl enable --now kubelet
 
-### On master
+## On master
 
 Initialize Kubernetes Cluster
 
 kubeadm init --apiserver-advertise-address=172.16.16.100 --pod-network-cidr=192.168.0.0/16
 
-### Deploy Calico network
+#### Deploy Calico network
 
 kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
 
-
-
-## Cluster join command
+#### Cluster join command
 
 kubeadm token create --print-join-command
 
-
-### On worker1 & worker2
+## On worker1 & worker2
  
-Join the cluster
+#### Join the cluster
 
 Use the output from “__kubeadm token create__ “ command in previous step from the master server and run here.
-
 
 #### Verifying the cluster:
 
@@ -141,6 +142,8 @@ kubectl get nodes
 Get component status
 
 kubectl get cs
+
+  
 
 
 
